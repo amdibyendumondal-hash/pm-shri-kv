@@ -1,0 +1,224 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  passwordHash String
+  name         String
+  role         String   // "ADMIN", "TEACHER"
+  email        String?
+  createdAt    DateTime @default(now())
+}
+
+model AcademicSession {
+  id        String   @id @default(uuid())
+  name      String   @unique // e.g. "2026-2027"
+  isCurrent Boolean  @default(false)
+  classes   Class[]
+}
+
+model Class {
+  id                String          @id @default(uuid())
+  name              String          // e.g. "Class 1", "Class 2"
+  sessionId         String
+  session           AcademicSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sections          Section[]
+  students          Student[]
+  exams             Exam[]
+  studyMaterials    StudyMaterial[]
+}
+
+model Section {
+  id             String    @id @default(uuid())
+  name           String    // e.g. "A", "B", "C"
+  classId        String
+  class          Class     @relation(fields: [classId], references: [id], onDelete: Cascade)
+  classTeacherId String?
+  students       Student[]
+}
+
+model Subject {
+  id    String @id @default(uuid())
+  name  String @unique // e.g. "Mathematics", "Science"
+  code  String @unique // e.g. "MATH101"
+  marks               Mark[]
+  notebookSubmissions NotebookSubmission[]
+  studyMaterials      StudyMaterial[]
+}
+
+model Student {
+  id             String       @id @default(uuid())
+  // Personal Info
+  admissionNo    String       @unique
+  rollNo         String
+  name           String
+  gender         String
+  dob            String
+  bloodGroup     String?
+  aadhaarNo      String?
+  category       String       // "General", "OBC", "SC", "ST"
+  religion       String?
+  nationality    String       @default("Indian")
+  // Parent Info
+  fatherName     String
+  motherName     String
+  guardianName   String?
+  mobile         String
+  altMobile      String?
+  email          String?
+  // Address
+  village        String
+  postOffice     String
+  district       String
+  state          String
+  pinCode        String
+  // Academic Info
+  admissionDate  String
+  previousSchool String?
+  house          String?      // "Shivaji", "Tagore", "Ashoka", "Raman"
+  aparId         String?
+  penNo          String?
+  photo          String?      // base64 data URL
+  status         String       @default("ACTIVE") // "ACTIVE", "PROMOTED", "LEFT"
+  
+  // New Demographics
+  admissionYear        String?
+  studentCode          String?
+  admissionCategory    String?
+  socialCategory       String?
+  minority             String?
+  physicallyDisabled   String?      @default("No")
+  singleGirlChild      String?      @default("No")
+  rte                  String?      @default("No")
+  kvsWard              String?      @default("No")
+  reimbursementClaimed String?      @default("No")
+
+  // Fees Structure
+  tuitionFee           Float?       @default(0)
+  computerFee          Float?       @default(0)
+  vvnFee               Float?       @default(0)
+  computerScienceFee   Float?       @default(0)
+  libraryFee           Float?       @default(0)
+  projectFee           Float?       @default(0)
+  totalFee             Float?       @default(0)
+  
+  // Relations
+  classId             String
+  class               Class                @relation(fields: [classId], references: [id])
+  sectionId           String
+  section             Section              @relation(fields: [sectionId], references: [id])
+  attendance          Attendance[]
+  marks               Mark[]
+  notebookSubmissions NotebookSubmission[]
+}
+
+model Attendance {
+  id        String   @id @default(uuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  date      String   // YYYY-MM-DD
+  status    String   // "PRESENT", "ABSENT", "LEAVE", "MEDICAL"
+  remarks   String?
+}
+
+model Exam {
+  id           String   @id @default(uuid())
+  name         String   // "Unit Test 1", "Half Yearly", etc.
+  academicYear String   // e.g. "2026-2027"
+  maxMarks     Float
+  passMarks    Float
+  classId      String
+  class        Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  marks        Mark[]
+}
+
+model Mark {
+  id             String   @id @default(uuid())
+  studentId      String
+  student        Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  examId         String
+  exam           Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  subjectId      String
+  subject        Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  marksObtained  Float
+  grade          String
+  remarks        String?
+  createdAt      DateTime @default(now())
+}
+
+model NotificationLog {
+  id        String   @id @default(uuid())
+  type      String   // "SMS", "EMAIL"
+  recipient String   // Phone number or email
+  message   String
+  status    String   // "SENT", "FAILED"
+  timestamp DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String
+  username  String
+  action    String
+  details   String
+  timestamp DateTime @default(now())
+}
+
+model House {
+  id   String @id @default(uuid())
+  name String @unique
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  name        String
+  type        String   // "HTML" or "GEOGEBRA"
+  content     String   // HTML source code or GeoGebra base64 data / embed URL
+  teacherId   String
+  teacherName String
+  createdAt   DateTime @default(now())
+}
+
+model NotebookSubmission {
+  id          String   @id @default(uuid())
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subjectId   String
+  subject     Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  date        String   // YYYY-MM-DD
+  status      String   // "SUBMITTED", "NOT_SUBMITTED", "LATE"
+  quality     String   // "EXCELLENT", "GOOD", "AVERAGE", "POOR", "N/A"
+  remarks     String?
+  createdAt   DateTime @default(now())
+
+  @@unique([studentId, subjectId, date])
+}
+
+model StudyMaterial {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  classId     String
+  class       Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  subjectId   String
+  subject     Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  content     String   // Base64 encoded PDF file data
+  fileName    String
+  teacherId   String
+  teacherName String
+  createdAt   DateTime @default(now())
+}
+
+model ThresholdConfig {
+  id          String   @id @default(uuid())
+  teacherId   String   @unique
+  remedialMax Float    @default(35) // Marks % under this are remedial
+  giftedMin   Float    @default(75) // Marks % at or above this are gifted
+}

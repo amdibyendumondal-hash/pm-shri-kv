@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-blue-950: #090d16;
+  --color-brand-blue-900: #0f172a;
+  --color-brand-blue-700: #1d4ed8;
+  --color-brand-blue-600: #2563eb;
+  --color-brand-blue-500: #3b82f6;
+  --color-brand-blue-400: #60a5fa;
+  --color-brand-blue-300: #93c5fd;
+  --color-brand-teal-600: #0d9488;
+  --color-brand-teal-500: #14b8a6;
+  --color-brand-teal-400: #2dd4bf;
+  --color-brand-teal-300: #5eead4;
+  --color-brand-teal-900: #134e4a;
+  --color-brand-teal-950: #042f2e;
+  --color-brand-teal-955: #042f2e;
+  --color-brand-orange-600: #ea580c;
+  --color-brand-orange-500: #f97316;
+  --color-slate-955: #0b0f19;
+}
+
+/* Custom CSS helper utilities */
+
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-dark {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.4);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.6);
+}
+
+/* Printing styles for Report Cards & Student ID Cards */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .print-area {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+  }
+}
