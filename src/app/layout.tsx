@@ -20,11 +20,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${outfit.variable} h-full`}>
+    <html lang="en" className={`${outfit.variable} h-full`} suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.ico" />
       </head>
-      <body className="h-full bg-slate-50 text-slate-900 font-sans antialiased selection:bg-brand-blue-700 selection:text-white">
+      <body className="h-full bg-slate-50 text-slate-900 font-sans antialiased selection:bg-brand-blue-700 selection:text-white" suppressHydrationWarning>
         {children}
       </body>
     </html>
