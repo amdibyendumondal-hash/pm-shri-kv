@@ -76,13 +76,16 @@ export async function login(prevState: any, formData: FormData) {
     }
 
     // 2. Fall back to local database check if hardcoded credentials do not match
-    let user;
+    let user = null;
     try {
+      const emailLower = email.toLowerCase()
       user = await db.user.findFirst({
         where: {
           OR: [
-            { email: { equals: email, mode: 'insensitive' } },
-            { username: { equals: email, mode: 'insensitive' } }
+            { email: email },
+            { username: email },
+            { email: emailLower },
+            { username: emailLower }
           ]
         }
       })
