@@ -42,7 +42,7 @@ export default async function TeacherLayout({ children }: TeacherLayoutProps) {
   return (
     <div className="flex h-screen bg-slate-950 overflow-hidden font-sans">
       {/* Sidebar - Desktop */}
-      <aside className="hidden lg:flex lg:flex-col lg:w-72 lg:shrink-0 bg-slate-900 border-r border-slate-800">
+      <aside className="hidden lg:flex lg:flex-col lg:w-72 lg:shrink-0 bg-slate-900 border-r border-slate-800 print:hidden">
         {/* Brand Logo & Name */}
         <div className="h-16 flex items-center gap-3 px-6 border-b border-slate-800">
           <div className="p-2 bg-brand-teal-600/10 rounded-xl border border-brand-teal-500/30">
@@ -86,7 +86,7 @@ export default async function TeacherLayout({ children }: TeacherLayoutProps) {
           <form id="logout-form" action={handleLogoutAction}>
             <button
               type="submit"
-              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-800 hover:bg-slate-700 active:bg-slate-850 text-slate-300 font-medium rounded-xl transition-all text-xs cursor-pointer border border-slate-705"
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-800 hover:bg-slate-700 active:bg-slate-850 text-slate-300 font-medium rounded-xl transition-all text-xs cursor-pointer border border-slate-755"
             >
               <LogOut className="h-4 w-4 shrink-0" />
               Sign Out Session
@@ -96,9 +96,9 @@ export default async function TeacherLayout({ children }: TeacherLayoutProps) {
       </aside>
 
       {/* Main View Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden print:overflow-visible">
         {/* Top Header */}
-        <header className="h-16 bg-slate-900/60 backdrop-blur-md border-b border-slate-800 px-6 flex items-center justify-between z-20">
+        <header className="h-16 bg-slate-900/60 backdrop-blur-md border-b border-slate-800 px-6 flex items-center justify-between z-20 print:hidden">
           <h2 className="font-bold text-lg text-white">Educator Workspace</h2>
           <div className="flex items-center gap-4">
             {/* Quick Session Display */}
@@ -110,7 +110,7 @@ export default async function TeacherLayout({ children }: TeacherLayoutProps) {
         </header>
 
         {/* Scrollable Content View */}
-        <main className="flex-1 overflow-y-auto bg-slate-950 p-6 md:p-8">
+        <main className="flex-1 overflow-y-auto bg-slate-950 p-6 md:p-8 print:p-0 print:bg-white print:overflow-visible">
           {children}
         </main>
       </div>

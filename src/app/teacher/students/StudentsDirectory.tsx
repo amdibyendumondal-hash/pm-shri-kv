@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Search, Filter, Eye, BarChart3, FileText, Contact, School, ArrowRight, UserSquare2, Trash2 } from 'lucide-react'
+import * as XLSX from 'xlsx'
+import { Search, Filter, Eye, BarChart3, FileText, Contact, School, ArrowRight, UserSquare2, Trash2, FileSpreadsheet } from 'lucide-react'
 import { deleteStudent } from '../actions'
 
 interface Student {
@@ -72,12 +73,93 @@ export function StudentsDirectory({ students, classes }: StudentsDirectoryProps)
   // Unique sections list
   const uniqueSections = ['A', 'B', 'C']
 
+  // Excel Export logic mapping all demographic, parent, and fee columns
+  const handleExportToExcel = () => {
+    if (filteredStudents.length === 0) {
+      alert('No student records found to export.')
+      return
+    }
+
+    const excelData = filteredStudents.map(s => {
+      const raw = s as any
+      return {
+        'Admission No': raw.admissionNo || '',
+        'Roll No': raw.rollNo || '',
+        'Student Name': raw.name || '',
+        'Class': raw.class?.name || '',
+        'Section': raw.section?.name || '',
+        'Gender': raw.gender || '',
+        'Date of Birth': raw.dob || '',
+        'Blood Group': raw.bloodGroup || '',
+        'Aadhaar No': raw.aadhaarNo || '',
+        'Category': raw.category || '',
+        'Religion': raw.religion || '',
+        'Nationality': raw.nationality || '',
+        'Father Name': raw.fatherName || '',
+        'Mother Name': raw.motherName || '',
+        'Guardian Name': raw.guardianName || '',
+        'Mobile No': raw.mobile || '',
+        'Alt Mobile No': raw.altMobile || '',
+        'Email Address': raw.email || '',
+        'Village/Street': raw.village || '',
+        'Post Office': raw.postOffice || '',
+        'District': raw.district || '',
+        'State': raw.state || '',
+        'PIN Code': raw.pinCode || '',
+        'Admission Date': raw.admissionDate || '',
+        'Admission Year': raw.admissionYear || '',
+        'Admission Category': raw.admissionCategory || '',
+        'Student Code': raw.studentCode || '',
+        'Social Category': raw.socialCategory || '',
+        'Minority Group': raw.minority || '',
+        'Physically Disabled': raw.physicallyDisabled || 'No',
+        'Single Girl Child': raw.singleGirlChild || 'No',
+        'RTE Student': raw.rte || 'No',
+        'KVS Ward': raw.kvsWard || 'No',
+        'Reimbursement Claimed': raw.reimbursementClaimed || 'No',
+        'Previous School': raw.previousSchool || '',
+        'School House': raw.house || '',
+        'APAR ID': raw.aparId || '',
+        'PEN Number': raw.penNo || '',
+        'Tuition Fee': raw.tuitionFee || 0,
+        'Computer Fee': raw.computerFee || 0,
+        'VVN Fee': raw.vvnFee || 0,
+        'Computer Science Fee': raw.computerScienceFee || 0,
+        'Library Fee': raw.libraryFee || 0,
+        'Project Fee': raw.projectFee || 0,
+        'Total Fee': raw.totalFee || 0,
+        'Status': raw.status || 'ACTIVE'
+      }
+    })
+
+    // Create sheet
+    const worksheet = XLSX.utils.json_to_sheet(excelData)
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Students Registry')
+
+    // Auto-fit column widths
+    const maxLens = Object.keys(excelData[0]).map(key => {
+      let maxLen = key.length
+      excelData.forEach(row => {
+        const valStr = String((row as any)[key] || '')
+        if (valStr.length > maxLen) {
+          maxLen = valStr.length
+        }
+      })
+      return { wch: maxLen + 2 }
+    })
+    worksheet['!cols'] = maxLens
+
+    // Trigger download
+    XLSX.writeFile(workbook, 'PM_SHRI_KV_Mahuldiha_Student_Registry.xlsx')
+  }
+
   return (
     <div className="space-y-6">
       {/* Search and Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {/* Search */}
-        <div className="md:col-span-2 relative">
+        <div className="lg:col-span-2 relative">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <Search className="h-5 w-5 text-slate-500" />
           </div>
@@ -123,6 +205,15 @@ export function StudentsDirectory({ students, classes }: StudentsDirectoryProps)
             ))}
           </select>
         </div>
+
+        {/* Export Button */}
+        <button
+          onClick={handleExportToExcel}
+          className="inline-flex items-center justify-center gap-2 py-3 px-4 bg-slate-800 hover:bg-slate-700 active:bg-slate-850 text-slate-200 border border-slate-800 hover:border-slate-750 font-bold rounded-2xl transition-all text-xs cursor-pointer"
+        >
+          <FileSpreadsheet className="h-4.5 w-4.5 text-brand-teal-500" />
+          Export to Excel
+        </button>
       </div>
 
       {/* Directory Table */}

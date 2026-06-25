@@ -1,6 +1,6 @@
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
-import { AttendanceSheet } from './AttendanceSheet'
+import { AttendanceTabs } from './AttendanceTabs'
 
 export const dynamic = 'force-dynamic'
 
@@ -48,12 +48,12 @@ export default async function AttendancePage() {
   return (
     <div className="space-y-6">
       {/* Header Panel */}
-      <div>
-        <h1 className="text-2xl font-black text-white">Daily Attendance Ledger</h1>
-        <p className="text-sm text-slate-400">Compile daily attendance logs and trigger automatic notification alerts for absentees</p>
+      <div className="print:hidden">
+        <h1 className="text-2xl font-black text-white">Student Attendance Ledger</h1>
+        <p className="text-sm text-slate-400">Compile daily registers, compute monthly logs, and download print-ready sheets</p>
       </div>
 
-      <AttendanceSheet 
+      <AttendanceTabs 
         classes={mappedClasses} 
         defaultClassId={defaultClassId} 
         defaultSectionId={defaultSectionId} 
